@@ -1,4 +1,5 @@
 ﻿using ExpTrack.DbAccess.Contracts;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -11,10 +12,10 @@ namespace ExpTrack.EfCore.Repositories
 {
     public class ConnectionStringConfig : IConfigurationConnectionString
     {
-        private readonly IConfigurationConnectionString _configuration;
+        private readonly IConfiguration _configuration;
         private readonly ILoggerFactory _logger;
 
-        public ConnectionStringConfig(IConfigurationConnectionString configuration, ILoggerFactory logger)
+        public ConnectionStringConfig(IConfiguration configuration, ILoggerFactory logger)
         {
             this._configuration = configuration;
             this._logger = logger;
