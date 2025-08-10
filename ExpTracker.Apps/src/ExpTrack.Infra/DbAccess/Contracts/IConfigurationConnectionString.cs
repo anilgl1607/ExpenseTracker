@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ExpTrack.DbAccess.Contracts
 {
-    public interface IReadOpertions
+    public interface IConfigurationConnectionString
     {
-
+        string GetConnectionString(string constrkey);
     }
 }
