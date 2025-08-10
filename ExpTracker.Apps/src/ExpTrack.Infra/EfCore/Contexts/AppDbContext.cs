@@ -50,7 +50,7 @@ namespace ExpTrack.EfCore.Contexts
                 modelBuilder.ApplyConfiguration(new ExpenseConfig());
                 modelBuilder.ApplyConfiguration(new CategoryConfig());
                 modelBuilder.ApplyConfiguration(new UserConfig());
-                modelBuilder.ApplyConfiguration(new ExpenseConfig());
+                modelBuilder.ApplyConfiguration(new RefreshTokenConfig());
             }
         }
     }

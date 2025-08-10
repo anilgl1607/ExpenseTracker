@@ -1,5 +1,5 @@
-﻿using AppBal.Contracts;
-using AppModels.DTOs;
+﻿using ExpTrack.AppBal.Contracts;
+using ExpTrack.AppModels.DTOs;
 using ExpTrack.DbAccess.Contracts;
 using ExpTrack.DbAccess.Entities;
 using ExpTrack.EfCore.Contexts;
@@ -7,102 +7,123 @@ using ExpTrack.EfCore.Repositories.Adapters;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace AppBal.Adapters
+namespace ExpTrack.AppBal.Adapters
 {
-    public class ExpenseRepository : AppContextFactory<AppDbContext>, IExpenseRepository
+    public class ExpenseRepository : IExpenseRepository
     {
-        private readonly IConfigurationConnectionString _configuration;
-        private readonly ILoggerFactory _loggerFactory;
+        private readonly AppDbContext context;
 
         public ExpenseRepository(IConfigurationConnectionString configuration,
             ILoggerFactory loggerFactory)
-            : base(configuration, loggerFactory)
         {
-            this._configuration = configuration;
-            this._loggerFactory = loggerFactory;
+            context = new AppDbContext(configuration.GetConnectionString("ExpTrackDb"), loggerFactory);
         }
 
-        protected override AppDbContext CreateDbContext()
-        {
-            var connectionString = _configuration.GetConnectionString("ExpTrackDb");
-            return new AppDbContext(connectionString, _loggerFactory);
-        }
         public async Task<bool> CreateExpenseAsync(Expense expense)
         {
-            using (var context = CreateDbContext())
+            try
             {
-                await context.Expenses.AddAsync(expense);
-                return (await context.SaveChangesAsync() > 0 ? true : false);
+                await context.Expenses.AddAsync(expense).ConfigureAwait(false);
+                return await context.SaveChangesAsync().ConfigureAwait(false) > 0;
+            }
+            catch (Exception ex)
+            {
+                // Log exception or handle as needed
+                throw new InvalidOperationException("Failed to create expense.", ex);
             }
         }
 
-        public Task<bool> DeleteExpenseAsync(long id)
+        public async Task<bool> DeleteExpenseAsync(long id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<Expense>> GetAllExpensesAsync()
-        {
-            using (var context = CreateDbContext())
+            try
             {
-                return context.Expenses.ToListAsync();
+                var expense = await context.Expenses.FindAsync(id).ConfigureAwait(false);
+                if (expense == null)
+                    throw new KeyNotFoundException($"Expense with ID {id} not found.");
+
+                context.Expenses.Remove(expense);
+                return await context.SaveChangesAsync().ConfigureAwait(false) > 0;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to delete expense.", ex);
             }
         }
 
-        public async Task<List<Expense>> GetExpenseByIdAsync(DateTime fromdate, DateTime Todate)
+        public async Task<List<Expense>> GetExpenseByDateAsync(DateTime fromdate, DateTime Todate)
         {
-            using (var context = CreateDbContext())
+            try
             {
+                // Use AsNoTracking for read-only queries to improve performance
                 return await context.Expenses
+                    .AsNoTracking()
                     .Where(e => (e.CreatedAt >= fromdate && e.CreatedAt <= Todate) ||
-                    (e.ModifiedAt >= fromdate && e.ModifiedAt <= Todate))
-                    .ToListAsync();
+                                (e.ModifiedAt >= fromdate && e.ModifiedAt <= Todate))
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to retrieve expenses by date.", ex);
             }
         }
 
         public async Task<List<Expense>> GetExpensesByCategoryIdAsync(long categoryId)
         {
-            using (var context = CreateDbContext())
+            try
             {
                 return await context.Expenses
+                    .AsNoTracking()
                     .Where(e => e.CategoryId == categoryId)
-                    .ToListAsync();
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to retrieve expenses by category.", ex);
             }
         }
 
         public async Task<List<Expense>> GetExpensesByUserIdAsync(long userId)
         {
-            using (var context = CreateDbContext())
+            try
             {
                 return await context.Expenses
+                    .AsNoTracking()
                     .Where(e => e.UserId == userId)
-                    .ToListAsync();
+                    .ToListAsync()
+                    .ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to retrieve expenses by user.", ex);
             }
         }
 
         public async Task<Expense> UpdateExpenseAsync(long id, Expense expense)
         {
-            using (var context = CreateDbContext())
+            try
             {
-                var existingExpense = context.Expenses.Find(id);
+                var existingExpense = await context.Expenses.FindAsync(id).ConfigureAwait(false);
                 if (existingExpense == null)
-                {
                     throw new KeyNotFoundException($"Expense with ID {id} not found.");
-                }
+
+                // Only update changed fields for efficiency
                 existingExpense.Amount = expense.Amount;
                 existingExpense.Description = expense.Description;
                 existingExpense.CategoryId = expense.CategoryId;
                 existingExpense.UserId = expense.UserId;
+                existingExpense.ModifiedAt = DateTime.UtcNow;
+
                 context.Expenses.Update(existingExpense);
-                await context.SaveChangesAsync();
-                return new Expense
-                {
-                    Id = existingExpense.Id,
-                    Amount = existingExpense.Amount,
-                    Description = existingExpense.Description,
-                    CategoryId = existingExpense.CategoryId,
-                    UserId = existingExpense.UserId
-                };
+                await context.SaveChangesAsync().ConfigureAwait(false);
+
+                // Return the tracked entity directly
+                return existingExpense;
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Failed to update expense.", ex);
             }
         }
     }

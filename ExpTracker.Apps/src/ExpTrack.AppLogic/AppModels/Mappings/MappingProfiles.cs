@@ -1,4 +1,4 @@
-﻿using AppModels.DTOs;
+﻿using ExpTrack.AppModels.DTOs;
 using AutoMapper;
 using ExpTrack.DbAccess.Entities;
 using System;
@@ -15,13 +15,24 @@ namespace ExpTrack.AppModels.Mappings
         {
             CreateMap<User, UserReadDto>()
                 .ReverseMap();
+
+            CreateMap<User, UserCreateDto>()
+                .ReverseMap();
+
             CreateMap<RefreshToken,RefreshTokenReadDto>()
                 .ReverseMap();
+
             CreateMap<Expense,ExpenseReadDto>()
                 .ReverseMap();
+
             CreateMap<Expense, ExpenseCreateDto>()
                 .ReverseMap();
-            CreateMap<Category, CategoryReadDto>().ReverseMap();
+
+            CreateMap<Category, CategoryReadDto>()
+                .ReverseMap();
+
+            CreateMap<Category, CategoryCreateDto>()
+                .ReverseMap();
         }
     }
 }

@@ -17,21 +17,21 @@ namespace ExpTrack.EfCore.Configurations.EntityConfig
             base.Configure(builder);
             if (builder != null)
             {
-                builder.ToTable("Expenses");
+                builder.ToTable("expenses");
 
-                builder.Property(e => e.Id).HasColumnName("Id")
+                builder.Property(e => e.Id).HasColumnName("id")
                         .UseIdentityColumn();
-                builder.Property(e => e.UserId).HasColumnName("UserId");
-                builder.Property(e => e.Amount).HasColumnName("Amount")
+                builder.Property(e => e.UserId).HasColumnName("userid");
+                builder.Property(e => e.Amount).HasColumnName("amount")
                         .HasColumnType("decimal(18,2)");
-                builder.Property(e => e.Description).HasColumnName("Description");
-                builder.Property(e => e.ExpenseDate).HasColumnName("ExpenseDate")
+                builder.Property(e => e.Description).HasColumnName("description");
+                builder.Property(e => e.ExpenseDate).HasColumnName("expensedate")
                         .HasColumnType("datetime");
-                builder.Property(e => e.CreatedAt).HasColumnName("CreatedAt")
+                builder.Property(e => e.CreatedAt).HasColumnName("createdat")
                     .HasColumnType("datetime");
-                builder.Property(e => e.ModifiedAt).HasColumnName("ModifiedAt")
+                builder.Property(e => e.ModifiedAt).HasColumnName("modifiedat")
                     .HasColumnType("datetime");
-                builder.Property(e => e.CategoryId).HasColumnName("CategoryId");
+                builder.Property(e => e.CategoryId).HasColumnName("categoryid");
 
             }
         }
