@@ -6,4 +6,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\ExpTrack.Infra\EfCore\EfCore.csproj" />
+    <ProjectReference Include="..\AppModels\AppModels.csproj" />
+  </ItemGroup>
+
 </Project>
