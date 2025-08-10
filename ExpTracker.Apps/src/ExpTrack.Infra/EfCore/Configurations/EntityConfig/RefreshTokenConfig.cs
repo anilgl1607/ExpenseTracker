@@ -18,6 +18,7 @@ namespace ExpTrack.EfCore.Configurations.EntityConfig
 
             if (builder != null)
             {
+                builder.ToTable("refreshtokens");
                 builder.Property(e => e.Id).HasColumnName("id")
                     .UseIdentityColumn();
                 builder.Property(e => e.UserId).HasColumnName("userid");

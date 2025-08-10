@@ -54,7 +54,7 @@ namespace ExpTrack.EfCore.Repositories
         {
             string constr = string.Empty;
 
-            constr = _configuration.GetConnectionString(constrkey);
+            constr = _configuration.GetSection(constrkey).Value??"";
             if (string.IsNullOrEmpty(constr))
             {
                 _logger.CreateLogger<ConnectionStringConfig>().LogError($"Connection string for key '{constrkey}' is null or empty.");

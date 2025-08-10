@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppModels.DTOs
+namespace ExpTrack.AppModels.DTOs
 {
     public class ExpenseCreateDto
     {

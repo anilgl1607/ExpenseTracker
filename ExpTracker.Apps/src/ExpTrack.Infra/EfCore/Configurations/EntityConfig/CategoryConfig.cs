@@ -18,15 +18,16 @@ namespace ExpTrack.EfCore.Configurations.EntityConfig
 
             if (builder != null)
             {
-                builder.ToTable("Categories");
-                builder.Property(c => c.Id).HasColumnName("Id")
+                builder.ToTable("categories");
+                builder.Property(c => c.Id).HasColumnName("id")
                         .UseIdentityColumn();
-                builder.Property(c => c.Name).HasColumnName("Name");
+                builder.Property(c => c.Name).HasColumnName("name");
 
-                builder.Property(c => c.Description).HasColumnName("Description");
+                builder.Property(c => c.Description).HasColumnName("description");
 
-                builder.Property(c => c.CreatedAt).HasColumnName("CreatedAt")
+                builder.Property(c => c.CreatedAt).HasColumnName("createdat")
                     .HasColumnType("datetime");
+                builder.Property(c => c.UserId).HasColumnName("userid");
             }
         }
     }

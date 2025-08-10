@@ -16,11 +16,13 @@ namespace ExpTrack.EfCore.Repositories.Adapters
     {
         private IConfigurationConnectionString _configuration;
         private ILoggerFactory _loggerFactory;
+        private readonly string _constrkey;
 
-        public AppContextFactory(IConfigurationConnectionString configuration, ILoggerFactory loggerFactory)
+        public AppContextFactory(IConfigurationConnectionString configuration, ILoggerFactory loggerFactory,string constrkey)
         {
             _configuration = configuration;
             _loggerFactory = loggerFactory;
+            _constrkey = constrkey;
         }
 
         protected virtual T CreateDbContext()
